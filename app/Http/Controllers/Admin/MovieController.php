@@ -12,7 +12,7 @@ class MovieController extends Controller
 {
     public function index(): View
     {
-        $movies = Movie::latest()->paginate(20);
+        $movies = Movie::query()->latest()->paginate(20);
         return view('admin.movies.index', compact('movies'));
     }
 
@@ -23,8 +23,9 @@ class MovieController extends Controller
 
     public function store(MovieRequest $request): RedirectResponse
     {
-        Movie::create($request->validated());
-        return redirect()->route('admin.movies.index');
+        Movie::query()->create($request->validated());
+        return redirect()->route('admin.movies.index')
+            ->with('success', 'Movie created!');
     }
 
     public function edit(Movie $movie): View
@@ -35,12 +36,14 @@ class MovieController extends Controller
     public function update(MovieRequest $request, Movie $movie): RedirectResponse
     {
         $movie->update($request->validated());
-        return redirect()->route('admin.movies.index');
+        return redirect()->route('admin.movies.index')
+            ->with('success', 'Movie updated!');
     }
 
     public function destroy(Movie $movie): RedirectResponse
     {
         $movie->delete();
-        return redirect()->route('admin.movies.index');
+        return redirect()->route('admin.movies.index')
+            ->with('success', 'Movie deleted');
     }
 }
