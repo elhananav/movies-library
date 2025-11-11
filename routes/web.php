@@ -5,6 +5,8 @@ use App\Http\Controllers\CatalogController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('movies/import', [MovieController::class, 'importForm'])->name('movies.import.form');
+    Route::post('movies/import', [MovieController::class, 'import'])->name('movies.import');
     Route::resource('movies', MovieController::class);
 });
 

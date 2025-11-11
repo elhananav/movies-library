@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MovieRequest;
 use App\Models\Movie;
+use App\Services\MovieImportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -18,7 +20,11 @@ class MovieController extends Controller
 
     public function create(): View
     {
-        return view('admin.movies.create');
+        $prefill = session('prefill', []);
+
+        return view('admin.movies.create', [
+            'prefill' => $prefill,
+        ]);
     }
 
     public function store(MovieRequest $request): RedirectResponse
@@ -45,5 +51,28 @@ class MovieController extends Controller
         $movie->delete();
         return redirect()->route('admin.movies.index')
             ->with('success', 'Movie deleted');
+    }
+
+    public function importForm(): View
+    {
+        return view('admin.movies.import');
+    }
+
+    public function import(Request $request, MovieImportService $importService): View|RedirectResponse
+    {
+        $request->validate([
+            'query' => 'required|string'
+        ]);
+
+        $query = $request->input('query');
+        $data = $importService->fetch($query);
+
+        if (!$data) {
+            return back()->with('error', 'Movie not found or API error.');
+        }
+
+        return redirect()
+            ->route('admin.movies.create')
+            ->with('prefill', $data);
     }
 }
