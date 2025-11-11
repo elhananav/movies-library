@@ -14,7 +14,7 @@
             padding: 0;
         }
 
-        .container {
+        .page-container {
             max-width: 900px;
             margin: 40px auto;
             background: white;
@@ -69,9 +69,37 @@
 </head>
 <body>
 
-<div class="container">
-    @yield('content')
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ route('catalog.index') }}">Movie Library</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('catalog.index') }}">Catalog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.movies.index') }}">Admin: Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.movies.create') }}">Add Movie</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.movies.import.form') }}">Import Movie</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <div class="page-container">
+        @yield('content')
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

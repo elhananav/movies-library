@@ -27,3 +27,9 @@
     <label>Actors</label>
     <textarea name="actors">{{ old('actors', $prefill['actors'] ?? $movie->actors ?? '') }}</textarea>
 </div>
+
+@if(!empty($prefill['genres']))
+    @foreach($prefill['genres'] as $genre)
+        <input type="hidden" name="genre_names[]" value="{{ $genre }}">
+    @endforeach
+@endif

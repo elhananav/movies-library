@@ -32,13 +32,12 @@ class MovieController extends Controller
     {
         $movie = Movie::query()->create($request->validated());
 
-        $prefill = session('prefill', []);
-        session()->forget('prefill');
+        $genreNames = $request->input('genre_names', []);
 
-        if (!empty($prefill['genres'])) {
+        if (!empty($genreNames)) {
             $genreIds = [];
 
-            foreach ($prefill['genres'] as $name) {
+            foreach ($genreNames as $name) {
                 $genre = Genre::firstOrCreate(['name' => $name]);
                 $genreIds[] = $genre->id;
             }
@@ -87,8 +86,8 @@ class MovieController extends Controller
             return back()->with('error', 'Movie not found or API error.');
         }
 
-        session(['prefill' => $data]);
-
-        return redirect()->route('admin.movies.create');
+        return redirect()
+            ->route('admin.movies.create')
+            ->with('prefill', $data);
     }
 }
