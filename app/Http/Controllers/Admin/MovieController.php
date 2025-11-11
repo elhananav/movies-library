@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MovieRequest;
+use App\Models\Genre;
 use App\Models\Movie;
 use App\Services\MovieImportService;
 use Illuminate\Contracts\View\View;
@@ -29,7 +30,22 @@ class MovieController extends Controller
 
     public function store(MovieRequest $request): RedirectResponse
     {
-        Movie::query()->create($request->validated());
+        $movie = Movie::query()->create($request->validated());
+
+        $prefill = session('prefill', []);
+        session()->forget('prefill');
+
+        if (!empty($prefill['genres'])) {
+            $genreIds = [];
+
+            foreach ($prefill['genres'] as $name) {
+                $genre = Genre::firstOrCreate(['name' => $name]);
+                $genreIds[] = $genre->id;
+            }
+
+            $movie->genres()->sync($genreIds);
+        }
+
         return redirect()->route('admin.movies.index')
             ->with('success', 'Movie created!');
     }
@@ -71,8 +87,8 @@ class MovieController extends Controller
             return back()->with('error', 'Movie not found or API error.');
         }
 
-        return redirect()
-            ->route('admin.movies.create')
-            ->with('prefill', $data);
+        session(['prefill' => $data]);
+
+        return redirect()->route('admin.movies.create');
     }
 }

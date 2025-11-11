@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Genre;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -57,6 +58,9 @@ class MovieImportService
                 'director' => $data['Director'] ?? '',
                 'runtime_minutes' => isset($data['Runtime']) ? intval($data['Runtime']) : null,
                 'actors' => $data['Actors'] ?? '',
+                'genres' => isset($data['Genre'])
+                    ? array_map('trim', explode(',', $data['Genre']))
+                    : [],
             ];
         } catch (Throwable $e) {
             Log::error('OMDb API error', ['query' => $query, 'error' => $e->getMessage()]);
