@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class MovieImportService
 {
@@ -48,13 +50,15 @@ class MovieImportService
 
             return [
                 'title' => $data['Title'] ?? '',
-                'release_date' => ($data['Year'] ?? '') . '-01-01',
+                'release_date' => isset($data['Released']) && $data['Released'] !== 'N/A'
+                    ? Carbon::createFromFormat('d M Y', $data['Released'])->format('Y-m-d')
+                    : null,
                 'poster_url' => $data['Poster'] ?? '',
                 'director' => $data['Director'] ?? '',
                 'runtime_minutes' => isset($data['Runtime']) ? intval($data['Runtime']) : null,
                 'actors' => $data['Actors'] ?? '',
             ];
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('OMDb API error', ['query' => $query, 'error' => $e->getMessage()]);
             return null;
         }
