@@ -8,6 +8,7 @@ A simple Laravel application for managing and browsing movies, integrated with t
 
 ### Prerequisites
 - Docker Desktop installed and running
+- Composer (used to install project dependencies)
 
 ---
 
