@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile.Dockerfile
     container_name: movie_library_app
     ports:
       - "80:80"
@@ -33,7 +33,7 @@ services:
       MYSQL_USER: sail
       MYSQL_PASSWORD: password
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
 
