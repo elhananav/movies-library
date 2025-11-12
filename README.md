@@ -21,32 +21,43 @@ A simple Laravel application for managing and browsing movies, integrated with t
 
 2. Copy environment file:
    ```bash
-   cp .env.example .env
+   copy .env.example .env
    ```
+   
+3. Insert your OMDb API key in the `.env` file:
+   ```
+   OMDB_API_KEY=your_key_here
+   ```
+4. Run Composer install:
+    ```bash
+    composer install
+    ```
 
-3. Run Docker:
+4. Run Docker:
    ```bash
    docker compose up -d
    ```
 
-4. Generate app key and run migrations:
+5. Generate app key and run migrations:
    ```bash
-   docker exec -it movie_library_app php artisan key:generate
-   docker exec -it movie_library_app php artisan migrate
+   php -r "echo 'base64:'.base64_encode(random_bytes(32));"
    ```
+    Copy the generated key and set it in the .env file as APP_KEY
+
+
+6. Run migrations:
+   ```bash
+    docker exec -it movie_library_app php artisan migrate
+    ```
 
 ---
 
 ### Access the app
 
 - Web: [http://localhost](http://localhost)
-- Database: MySQL at `localhost:3306`, user `sail`, password `password`
 
 ---
 
 ## 🧪 Notes
 - The OMDb API key must be added to your `.env` file as `OMDB_API_KEY=your_key_here`.
-- You can stop everything anytime with:
-  ```bash
-  docker compose down
   
