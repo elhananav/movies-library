@@ -10,6 +10,7 @@ use App\Models\Movie;
 use App\Services\MovieImportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 class MovieController extends Controller
 {
@@ -30,20 +31,22 @@ class MovieController extends Controller
 
     public function store(MovieRequest $request): RedirectResponse
     {
-        $movie = Movie::query()->create($request->validated());
+        DB::transaction(function () use ($request) {
+            $movie = Movie::query()->create($request->validated());
 
-        $genreNames = $request->input('genre_names', []);
+            $genreNames = $request->input('genre_names', []);
 
-        if (!empty($genreNames)) {
-            $genreIds = [];
+            if (!empty($genreNames)) {
+                $genreIds = [];
 
-            foreach ($genreNames as $name) {
-                $genre = Genre::firstOrCreate(['name' => $name]);
-                $genreIds[] = $genre->id;
+                foreach ($genreNames as $name) {
+                    $genre = Genre::firstOrCreate(['name' => $name]);
+                    $genreIds[] = $genre->id;
+                }
+
+                $movie->genres()->sync($genreIds);
             }
-
-            $movie->genres()->sync($genreIds);
-        }
+        });
 
         return redirect()->route('admin.movies.index')
             ->with('success', 'Movie created!');

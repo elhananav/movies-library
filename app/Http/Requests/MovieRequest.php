@@ -23,6 +23,8 @@ class MovieRequest extends FormRequest
             'director' => ['nullable', 'string', 'max:255'],
             'runtime_minutes' => ['nullable', 'integer'],
             'actors' => ['nullable', 'string'],
+            'genre_names' => ['sometimes', 'array'],
+            'genre_names.*' => ['string', 'max:100'],
         ];
     }
 }
