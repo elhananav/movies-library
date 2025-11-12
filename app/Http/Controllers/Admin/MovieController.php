@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MovieRequest;
+use App\Http\Requests\ImportMovieRequest;
 use App\Models\Genre;
 use App\Models\Movie;
 use App\Services\MovieImportService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
@@ -73,12 +73,8 @@ class MovieController extends Controller
         return view('admin.movies.import');
     }
 
-    public function import(Request $request, MovieImportService $importService): View|RedirectResponse
+    public function import(ImportMovieRequest $request, MovieImportService $importService): RedirectResponse
     {
-        $request->validate([
-            'query' => 'required|string'
-        ]);
-
         $query = $request->input('query');
         $data = $importService->fetch($query);
 

@@ -2,26 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CatalogIndexRequest;
 use App\Models\Genre;
 use App\Models\Movie;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class CatalogController extends Controller
 {
-    public function index(Request $request): View
+    public function index(CatalogIndexRequest $request): View
     {
-        $genreName = $request->query('genre');
+        $genreName = $request->validated()['genre'] ?? null;
 
-        $query = Movie::query()->with('genres');
+        $movies = Movie::with('genres')
+            ->when($genreName, fn($query) => $query->whereHas('genres', fn($q) => $q->where('name', $genreName)))
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
 
-        if ($genreName) {
-            $query->whereHas('genres', function ($q) use ($genreName) {
-                $q->where('name', $genreName);
-            });
-        }
-
-        $movies = $query->latest()->paginate(12)->withQueryString();
         $genres = Genre::orderBy('name')->get();
 
         return view('catalog.index', compact('movies', 'genres', 'genreName'));
